@@ -28,3 +28,36 @@ jobs:
 
       - name: Run tests
         run: python -m pytest
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create application package
+        run: zip -r application.zip app.py requirements.txt
+
+      - name: Upload application artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: application
+          path: application.zip
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download application artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: application
+
+      - name: List downloaded files
+        run: ls -la
+
+      - name: Deploy application
+        run: echo "Deploying application.zip"          
