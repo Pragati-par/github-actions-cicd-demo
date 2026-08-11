@@ -51,6 +51,7 @@ jobs:
     needs: 
       - build
       - dependency-scan
+      - codeql
 
     steps:
       - name: Download application artifact
