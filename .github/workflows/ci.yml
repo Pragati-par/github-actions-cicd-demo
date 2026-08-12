@@ -49,9 +49,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: 
-      - build
-      - dependency-scan
-      - codeql
+      - docker-build
 
     steps:
       - name: Download application artifact
@@ -101,4 +99,18 @@ jobs:
           languages: python
 
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@v3             
+        uses: github/codeql-action/analyze@v3      
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - dependency-scan
+      - codeql
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t github-actions-demo .               
