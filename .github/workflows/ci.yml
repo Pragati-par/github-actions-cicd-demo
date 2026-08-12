@@ -127,7 +127,7 @@ jobs:
         run: docker build -t github-actions-demo .
 
       - name: Scan Docker image
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: github-actions-demo
           format: table
