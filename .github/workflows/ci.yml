@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+
   pull_request:
     branches:
       - main
@@ -95,21 +96,25 @@ jobs:
         run: |
           docker build \
             --no-cache \
-            -t ghcr.io/${{ github.repository }}:${{ github.sha }} \
+            -t ghcr.io/pragati-par/github-actions-cicd-demo:${{ github.sha }} \
             .
 
-      - name: Inspect image
+      - name: Inspect setuptools
         run: |
-          docker run --rm ghcr.io/${{ github.repository }}:${{ github.sha }} \
+          docker run --rm \
+            ghcr.io/pragati-par/github-actions-cicd-demo:${{ github.sha }} \
             python -m pip show setuptools
 
-          docker run --rm ghcr.io/${{ github.repository }}:${{ github.sha }} \
+      - name: Inspect msgpack
+        run: |
+          docker run --rm \
+            ghcr.io/pragati-par/github-actions-cicd-demo:${{ github.sha }} \
             python -m pip show msgpack
 
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          image-ref: ghcr.io/pragati-par/github-actions-cicd-demo:${{ github.sha }}
           format: table
           severity: HIGH,CRITICAL
           exit-code: "0"
@@ -124,4 +129,4 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker push ghcr.io/pragati-par/github-actions-cicd-demo:${{ github.sha }}
