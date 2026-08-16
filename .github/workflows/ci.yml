@@ -72,7 +72,7 @@ jobs:
         uses: github/codeql-action/analyze@v3
 
 
-    docker-build-and-scan:
+  docker-build-and-scan:
     needs:
       - test
       - dependency-scan
