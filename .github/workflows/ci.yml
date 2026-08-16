@@ -4,16 +4,12 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
 
 jobs:
 
-  # -------------------------
-  # 1. Unit Tests
-  # -------------------------
   test:
     runs-on: ubuntu-latest
 
@@ -33,9 +29,6 @@ jobs:
         run: python -m pytest
 
 
-  # -------------------------
-  # 2. Dependency Scanning
-  # -------------------------
   dependency-scan:
     runs-on: ubuntu-latest
 
@@ -58,9 +51,6 @@ jobs:
         run: pip-audit -r requirements.txt
 
 
-  # -------------------------
-  # 3. CodeQL / SAST
-  # -------------------------
   codeql:
     runs-on: ubuntu-latest
 
@@ -82,10 +72,7 @@ jobs:
         uses: github/codeql-action/analyze@v3
 
 
-  # -------------------------
-  # 4. Docker Build + Trivy
-  # -------------------------
-   docker-build-and-scan:
+  docker-build-and-scan:
     needs:
       - test
       - dependency-scan
@@ -101,25 +88,13 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
-        run: |
-          docker build \
-            --no-cache \
-            -t github-actions-demo:${{ github.sha }} \
-            .
+        run: docker build --no-cache -t github-actions-demo:${{ github.sha }} .
 
-      - name: Inspect Docker image
-        run: |
-          echo "Checking setuptools:"
-          docker run --rm github-actions-demo:${{ github.sha }} \
-            python -m pip show setuptools
+      - name: Inspect setuptools
+        run: docker run --rm github-actions-demo:${{ github.sha }} python -m pip show setuptools
 
-          echo "Checking msgpack:"
-          docker run --rm github-actions-demo:${{ github.sha }} \
-            python -m pip show msgpack
-
-          echo "Installed packages:"
-          docker run --rm github-actions-demo:${{ github.sha }} \
-            python -m pip freeze
+      - name: Inspect msgpack
+        run: docker run --rm github-actions-demo:${{ github.sha }} python -m pip show msgpack
 
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@v0.36.0
@@ -127,5 +102,5 @@ jobs:
           image-ref: github-actions-demo:${{ github.sha }}
           format: table
           severity: HIGH,CRITICAL
-          exit-code: '1'
+          exit-code: "1"
           ignore-unfixed: true
