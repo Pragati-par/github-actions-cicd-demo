@@ -85,7 +85,7 @@ jobs:
   # -------------------------
   # 4. Docker Build + Trivy
   # -------------------------
-  docker-build-and-scan:
+   docker-build-and-scan:
     needs:
       - test
       - dependency-scan
@@ -106,6 +106,20 @@ jobs:
             --no-cache \
             -t github-actions-demo:${{ github.sha }} \
             .
+
+      - name: Inspect Docker image
+        run: |
+          echo "Checking setuptools:"
+          docker run --rm github-actions-demo:${{ github.sha }} \
+            python -m pip show setuptools
+
+          echo "Checking msgpack:"
+          docker run --rm github-actions-demo:${{ github.sha }} \
+            python -m pip show msgpack
+
+          echo "Installed packages:"
+          docker run --rm github-actions-demo:${{ github.sha }} \
+            python -m pip freeze
 
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@v0.36.0
