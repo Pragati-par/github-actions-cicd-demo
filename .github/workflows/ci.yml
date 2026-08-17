@@ -162,6 +162,17 @@ jobs:
       - name: Smoke test
         run: |
           curl --fail http://localhost:5000/health
+      - name: Integration tests
+        run: |
+          echo "Running integration tests..."
+
+          echo "Test 1: Health endpoint"
+          curl --fail http://localhost:5000/health
+
+          echo "Test 2: Application endpoint"
+          curl --fail http://localhost:5000/
+
+          echo "Integration tests passed"    
 
       - name: Stop application
         if: always()
