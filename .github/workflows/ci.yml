@@ -131,7 +131,7 @@ jobs:
         run: |
           docker push ghcr.io/pragati-par/github-actions-cicd-demo:${{ github.sha }}
 
-    deploy-dev:
+  deploy-dev:
     needs:
       - docker-build-and-scan
 
